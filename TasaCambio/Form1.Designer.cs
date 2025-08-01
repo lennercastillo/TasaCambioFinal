@@ -103,7 +103,7 @@
             this.BotonEliminar.TabIndex = 4;
             this.BotonEliminar.Text = "ELIMINAR";
             this.BotonEliminar.UseVisualStyleBackColor = true;
-            this.BotonEliminar.Click += new System.EventHandler(this.BotonImportar_Click);
+            this.BotonEliminar.Click += new System.EventHandler(this.BotonEliminar_Click);
             // 
             // textBox_tasa
             // 
@@ -116,6 +116,7 @@
             // dateTimePicker_fecha
             // 
             this.dateTimePicker_fecha.CustomFormat = "dd/MM/yyyy";
+            this.dateTimePicker_fecha.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
             this.dateTimePicker_fecha.Location = new System.Drawing.Point(12, 122);
             this.dateTimePicker_fecha.Name = "dateTimePicker_fecha";
             this.dateTimePicker_fecha.Size = new System.Drawing.Size(200, 21);

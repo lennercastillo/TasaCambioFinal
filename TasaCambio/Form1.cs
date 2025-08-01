@@ -10,6 +10,7 @@ namespace TasaCambio
     {
         public static string ConexionErp = "Data Source=.;Initial Catalog=bd_erp_next;Persist Security Info=False;User ID=admin;Password=Admin@123";
         private DataTable dtDatos;
+        int idrow = 0;
 
         public Form1()
         {
@@ -72,29 +73,9 @@ namespace TasaCambio
             dateTimePicker_fecha.Enabled = true;
             textBox_tasa.Enabled = true;
             textBox_tasa.Text = string.Empty;
+            idrow = 0;
 
-            if (dataGridViewTasaCambio.AllowUserToAddRows)
-            {
-                if (dataGridViewTasaCambio.Rows.Count > 0 && !dataGridViewTasaCambio.Rows[dataGridViewTasaCambio.Rows.Count - 1].IsNewRow)
-                {
-                    dataGridViewTasaCambio.CurrentCell = dataGridViewTasaCambio.Rows[dataGridViewTasaCambio.Rows.Count - 1].Cells[0];
-                    dataGridViewTasaCambio.BeginEdit(true);
-                }
-                else if (dataGridViewTasaCambio.Rows.Count > 0 && dataGridViewTasaCambio.Rows[dataGridViewTasaCambio.Rows.Count - 1].IsNewRow)
-                {
-                    MessageBox.Show("Ya puedes introducir un nuevo registro de tasa", "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
-                else if (dataGridViewTasaCambio.Rows.Count == 0)
-                {
-                    dataGridViewTasaCambio.Rows.Add();
-                    dataGridViewTasaCambio.CurrentCell = dataGridViewTasaCambio.Rows[0].Cells[0];
-                    dataGridViewTasaCambio.BeginEdit(true);
-                }
-            }
-            else
-            {
-                MessageBox.Show("Para añadir nuevos registros, la propiedad 'AllowUserToAddRows' debe estar en true.", "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
+
         }
 
         private void DataGridViewTasaCambio_DefaultValuesNeeded(object sender, DataGridViewRowEventArgs e)
@@ -161,10 +142,12 @@ namespace TasaCambio
             }
         }
 
+       
+
         private void BotonEditar_Click(object sender, EventArgs e)
         {
             dataGridViewTasaCambio.Enabled = true;
-            dataGridViewTasaCambio.ClearSelection();
+            
 
             if (dataGridViewTasaCambio.SelectedRows.Count > 0)
             {
@@ -173,38 +156,66 @@ namespace TasaCambio
                 textBox_tasa.Enabled = true;
                 dateTimePicker_fecha.Value = Convert.ToDateTime(selectedRow.Cells["fecha"].Value);
                 textBox_tasa.Text = selectedRow.Cells["tasa"].Value.ToString();
+                idrow = Convert.ToInt32(selectedRow.Cells["id"].Value);
 
-               
-                dataGridViewTasaCambio.ClearSelection();
+
+                
             }
-            else
-            {
-                MessageBox.Show("Selecciona una fila para editar.", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
+            
+            
+
+        }
+
+        private void actualizar() 
+        {
             using (SqlConnection conexion = new SqlConnection(ConexionErp))
             {
                 try
                 {
+
+                    string fecha = dateTimePicker_fecha.Text.Trim();
+                    string tasa = textBox_tasa.Text.Trim();
+
                     conexion.Open();
-                    string query = "SELECT tasa, fecha FROM bd_erp_next.dbo.tasacambio";
+                    string query = @"UPDATE bd_erp_next.dbo.tasacambio
+                                 SET tasa = @tasa , fecha = @fecha 
+                                 WHERE id = @id";
 
-                    using (SqlDataAdapter adaptador = new SqlDataAdapter(query, conexion))
+                    using (SqlCommand cmd = new SqlCommand(query, conexion))
                     {
-                        DataTable dt = new DataTable();
-                        adaptador.Fill(dt);
-                        MessageBox.Show("Datos actualizados correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        cmd.Parameters.AddWithValue("@id", idrow);
+                        cmd.Parameters.AddWithValue("@tasa", tasa);
+                        cmd.Parameters.AddWithValue("@fecha", fecha);
 
+                        object result = cmd.ExecuteNonQuery();
+
+                        if (result != null && result != DBNull.Value)
+                        {
+                            CargarGrid();
+
+                            if (Convert.ToInt32(result) > 0)
+                            {
+
+                                MessageBox.Show("Datos actualizados correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            }
+
+                        }
+                        else
+                        {
+                            MessageBox.Show("Error: No se pudo obtener el ID del nuevo registro.", "Error de Base de Datos", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
                     }
+
+
+                    
                 }
 
-                
+
                 catch (Exception ex)
                 {
                     MessageBox.Show("Error: " + ex.Message);
                 }
             }
-
         }
 
         private void CargarGrid()
@@ -216,7 +227,7 @@ namespace TasaCambio
             dateTimePicker_fecha.Enabled = false;
             textBox_tasa.Enabled = false;
             textBox_tasa.Text = string.Empty;
-            dataGridViewTasaCambio.Enabled = false;
+            
 
 
 
@@ -225,7 +236,7 @@ namespace TasaCambio
                 try
                 {
                     conexion.Open();
-                    string query = "SELECT id, tasa, fecha FROM bd_erp_next.dbo.tasacambio";
+                    string query = "SELECT id,tasa,fecha FROM bd_erp_next.dbo.tasacambio WHERE anulado = 0";
 
                     using (SqlDataAdapter adaptador = new SqlDataAdapter(query, conexion))
                     {
@@ -251,6 +262,8 @@ namespace TasaCambio
 
             ValidacionesDatos();
 
+
+
             double tasaValue;
 
             if (!double.TryParse(textBox_tasa.Text, out tasaValue))
@@ -259,7 +272,27 @@ namespace TasaCambio
                 return;
             }
 
+            if (idrow > 0)
+            {
+
+                actualizar();
+                dataGridViewTasaCambio.ClearSelection();
+                idrow = 0;
+
+
+            }
+
+            else 
+            {
+                guardarnuevo();
+            }
+           
+        }
+
+        private void guardarnuevo()
+        {
             object fechaValue = dateTimePicker_fecha.Value;
+            object tasaValue = textBox_tasa.Text.Trim();
 
             if (fechaValue != null && fechaValue != DBNull.Value)
             {
@@ -311,11 +344,7 @@ namespace TasaCambio
         }
         
 
-        private void BotonImportar_Click(object sender, EventArgs e)
-        {
-            EliminarFila1();
-            dataGridViewTasaCambio.ClearSelection();
-        }
+        
 
         private void EliminarFila1()
         {
@@ -330,7 +359,7 @@ namespace TasaCambio
                     try
                     {
                         conexion.Open();
-                        string query = "DELETE FROM bd_erp_next.dbo.tasacambio WHERE id = @id";
+                        string query = "UPDATE bd_erp_next.dbo.tasacambio SET anulado = 1 WHERE id = @id";
 
                         using (SqlCommand cmd = new SqlCommand(query, conexion))
                         {
@@ -351,7 +380,7 @@ namespace TasaCambio
             }
             else
             {
-                MessageBox.Show("Selecciona una fila para eliminar.");
+                MessageBox.Show("Selecciona una fila para eliminar.", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
 
 
@@ -426,6 +455,41 @@ namespace TasaCambio
             dataGridViewTasaCambio.ClearSelection();
             dataGridViewTasaCambio.Enabled = false;
             MessageBox.Show("Registro cancelado.", "Recarga Exitosa", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+            dateTimePicker_fecha.Enabled = false;
+            textBox_tasa.Enabled = false;
+            textBox_tasa.Text = string.Empty;
+            dataGridViewTasaCambio.ClearSelection();
+            dataGridViewTasaCambio.Enabled = false;
+
+        }
+
+        private void BotonEliminar_Click(object sender, EventArgs e)
+        {
+            if (dataGridViewTasaCambio.SelectedRows.Count > 0)
+            {
+
+                DialogResult resultado = MessageBox.Show(
+                    "¿Estás seguro de que quieres eliminar este registro?",
+                    "Confirmar Eliminación",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question
+                );
+
+
+                if (resultado == DialogResult.Yes)
+                {
+
+                    EliminarFila1();
+                    dataGridViewTasaCambio.ClearSelection();
+
+
+
+
+                }
+
+            }
+
         }
     }
 }
