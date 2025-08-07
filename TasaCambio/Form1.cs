@@ -224,8 +224,8 @@ namespace TasaCambio
             
 
         {
-            dateTimePicker_fecha.Enabled = false;
-            textBox_tasa.Enabled = false;
+            dateTimePicker_fecha.Enabled = true;
+            textBox_tasa.Enabled = true;
             textBox_tasa.Text = string.Empty;
             
 
