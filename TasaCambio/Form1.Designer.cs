@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.dataGridViewTasaCambio = new System.Windows.Forms.DataGridView();
             this.label4 = new System.Windows.Forms.Label();
             this.BotonNuevo = new System.Windows.Forms.Button();
             this.BotonEditar = new System.Windows.Forms.Button();
@@ -44,22 +43,9 @@
             this.gridColumn_tasa = new DevExpress.XtraGrid.Columns.GridColumn();
             this.gridControl_tasacambio = new DevExpress.XtraGrid.GridControl();
             this.button_recargar = new System.Windows.Forms.Button();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewTasaCambio)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridControl_tasacambio)).BeginInit();
             this.SuspendLayout();
-            // 
-            // dataGridViewTasaCambio
-            // 
-            this.dataGridViewTasaCambio.AllowUserToDeleteRows = false;
-            this.dataGridViewTasaCambio.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.dataGridViewTasaCambio.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridViewTasaCambio.Location = new System.Drawing.Point(12, 149);
-            this.dataGridViewTasaCambio.Name = "dataGridViewTasaCambio";
-            this.dataGridViewTasaCambio.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridViewTasaCambio.Size = new System.Drawing.Size(776, 91);
-            this.dataGridViewTasaCambio.TabIndex = 0;
-            this.dataGridViewTasaCambio.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView2_CellContentClick);
             // 
             // label4
             // 
@@ -70,7 +56,7 @@
             this.label4.Size = new System.Drawing.Size(225, 26);
             this.label4.TabIndex = 1;
             this.label4.Text = "Maestro Tasa Cambio";
-            this.label4.Click += new System.EventHandler(this.label1_Click);
+//            this.label4.Click += new System.EventHandler(this.label1_Click);
             // 
             // BotonNuevo
             // 
@@ -111,7 +97,6 @@
             this.textBox_tasa.Name = "textBox_tasa";
             this.textBox_tasa.Size = new System.Drawing.Size(147, 21);
             this.textBox_tasa.TabIndex = 5;
-            this.textBox_tasa.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBox_tasa_KeyPress);
             // 
             // dateTimePicker_fecha
             // 
@@ -141,7 +126,6 @@
             this.label1.Size = new System.Drawing.Size(40, 13);
             this.label1.TabIndex = 8;
             this.label1.Text = "Fecha:";
-            this.label1.Click += new System.EventHandler(this.label1_Click_1);
             // 
             // label2
             // 
@@ -180,14 +164,13 @@
             // 
             // gridControl_tasacambio
             // 
-            this.gridControl_tasacambio.Location = new System.Drawing.Point(12, 255);
+            this.gridControl_tasacambio.Location = new System.Drawing.Point(12, 198);
             this.gridControl_tasacambio.MainView = this.gridView1;
             this.gridControl_tasacambio.Name = "gridControl_tasacambio";
             this.gridControl_tasacambio.Size = new System.Drawing.Size(776, 167);
             this.gridControl_tasacambio.TabIndex = 10;
             this.gridControl_tasacambio.ViewCollection.AddRange(new DevExpress.XtraGrid.Views.Base.BaseView[] {
             this.gridView1});
-            this.gridControl_tasacambio.Click += new System.EventHandler(this.gridControl_tasacambio_Click);
             // 
             // button_recargar
             // 
@@ -216,11 +199,9 @@
             this.Controls.Add(this.BotonEditar);
             this.Controls.Add(this.BotonNuevo);
             this.Controls.Add(this.label4);
-            this.Controls.Add(this.dataGridViewTasaCambio);
             this.Name = "Form1";
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.Form1_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewTasaCambio)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridView1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridControl_tasacambio)).EndInit();
             this.ResumeLayout(false);
@@ -229,7 +210,6 @@
         }
 
         #endregion
-        private System.Windows.Forms.DataGridView dataGridViewTasaCambio;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Button BotonNuevo;
         private System.Windows.Forms.Button BotonEditar;
